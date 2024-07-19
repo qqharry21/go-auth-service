@@ -1,4 +1,37 @@
+definitions:
+  requests.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login with the input payload
+      parameters:
+      - description: User for login
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/requests.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Login
+      tags:
+      - Users
 swagger: "2.0"

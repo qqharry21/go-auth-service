@@ -11,6 +11,15 @@ services:
       - mongodb
       - redis
 
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - '8081:8080' # 确保这个端口没有冲突
+    environment:
+      SWAGGER_JSON: http://app:8080/swagger/doc.json
+    depends_on:
+      - app
+
   mongodb:
     image: mongo:latest
     container_name: mongodb

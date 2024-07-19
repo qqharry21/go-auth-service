@@ -5,12 +5,19 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func NewSwagger() gin.HandlerFunc {
+	err := godotenv.Load(".env")
+	if err != nil {
+		logrus.Error(err)
+	}
+
 	docs.SwaggerInfo.Title = "Go Auth Service"
 	docs.SwaggerInfo.Description = "This is a simple authentication service"
 	docs.SwaggerInfo.Version = "1.0"
