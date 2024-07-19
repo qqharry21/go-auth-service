@@ -1,42 +1,45 @@
 package main
 
 import (
-	"context"
-	"log"
+	"go-auth-service/databases"
+	"go-auth-service/middlewares"
+	"go-auth-service/routes"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
-	middleware "github.com/qqharry21/go-auth-service/middlewares"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/joho/godotenv"
+
+	"github.com/sirupsen/logrus"
 )
 
-var mongoClient *mongo.Client
-var redisClient *redis.Client
-
 func main() {
-	// 連接到 MongoDB
-	mongoClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://mongodb:27017"))
+	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal(err)
+		logrus.Error(err)
 	}
-	defer mongoClient.Disconnect(context.Background())
 
-	// 連接到 Redis
-	redisClient = redis.NewClient(&redis.Options{
-		Addr: "redis:6379",
-	})
-
+	gin.SetMode(os.Getenv("GIN_MODE"))
 	r := gin.Default()
 
+	r.Use(gin.Logger())
+	r.Use(middlewares.NewCors([]string{"*"}))
+	r.GET("swagger/*any", middlewares.NewSwagger())
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
 
-	r.GET("swagger/*any", middleware.NewSwagger())
+	publicRoute := r.Group(os.Getenv("BASE_PATH"))
+	resource, err := databases.InitResource()
 
-	r.Run(":8080")
+	if err != nil {
+		logrus.Error(err)
+	}
+	defer resource.Close()
+	routes.InitUserRouter(publicRoute, resource)
+	// routes.InitWorkflowRouter(publicRoute, resource)
+
+	r.Run(":" + os.Getenv("PORT"))
 }
