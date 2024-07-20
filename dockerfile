@@ -13,10 +13,14 @@ RUN go mod download
 # 複製源代碼
 COPY . .
 
+# Generate swagger docs
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN swag init
+
 # 添加調試信息
 RUN pwd && ls -la
 
-# 構建應用
+# Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
 # 使用輕量級的 alpine 映像作為最終映像
@@ -30,8 +34,8 @@ WORKDIR /root/
 # 從構建階段複製二進制文件
 COPY --from=builder /app/main .
 
-# 複製可能需要的其他文件（如配置文件）
-# COPY --from=builder /app/config.yaml .
+# Copy the docs directory
+COPY --from=builder /app/docs ./docs
 
 # 暴露應用端口
 EXPOSE 8080

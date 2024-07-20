@@ -29,13 +29,13 @@ func InitResource() (*Resource, error) {
 	}
 
 	// Initialize MongoDB
-	mongoHost := os.Getenv("MONGO_HOST")
 	mongoDBName := os.Getenv("MONGO_DB_NAME")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoHost))
+	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGO_URI")))
 	defer cancel()
 
 	if err != nil {
+		logrus.Error("Error connecting to MongoDB")
 		logrus.Error(err)
 		return nil, err
 	}
@@ -44,11 +44,12 @@ func InitResource() (*Resource, error) {
 	redisClient := redis.NewClient(&redis.Options{
 		Username: os.Getenv("REDIS_USERNAME"),
 		Password: os.Getenv("REDIS_PASSWORD"),
-		Addr:     os.Getenv("REDIS_HOST"),
+		Addr:     os.Getenv("REDIS_ADDR"),
 	})
 
 	_, err = redisClient.Ping(context.Background()).Result()
 	if err != nil {
+		logrus.Error("Error connecting to Redis")
 		logrus.Error(err)
 		return nil, err
 	}

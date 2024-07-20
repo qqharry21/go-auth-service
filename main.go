@@ -13,6 +13,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// @title Go Auth Service
+// @version 1.0
+// @description "This is a simple authentication service"
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+// @host {{.Host}}
+// @BasePath {{.BasePath}}
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {

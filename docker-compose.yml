@@ -10,15 +10,18 @@ services:
     depends_on:
       - mongodb
       - redis
+    volumes:
+      # - ./docs:/app/docs
+      - ./.env:/root/.env # Mount the .env file
 
   swagger-ui:
     image: swaggerapi/swagger-ui
     ports:
-      - '8081:8080' # 确保这个端口没有冲突
+      - '8081:8080'
     environment:
-      SWAGGER_JSON: http://app:8080/swagger/doc.json
-    depends_on:
-      - app
+      - SWAGGER_JSON=/app/docs/swagger.json
+    volumes:
+      - ./docs:/app/docs
 
   mongodb:
     image: mongo:latest
@@ -28,9 +31,6 @@ services:
       - '27017:27017'
     volumes:
       - mongodb_data:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
 
   redis:
     image: redis:latest

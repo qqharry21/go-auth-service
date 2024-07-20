@@ -1,3 +1,4 @@
+basePath: '{{.BasePath}}'
 definitions:
   requests.LoginRequest:
     properties:
@@ -9,8 +10,15 @@ definitions:
     - password
     - username
     type: object
+host: '{{.Host}}'
 info:
-  contact: {}
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: '"This is a simple authentication service"'
+  title: Go Auth Service
+  version: "1.0"
 paths:
   /login:
     post:
