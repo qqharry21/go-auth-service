@@ -13,14 +13,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// @title Go Auth Service
 // @version 1.0
-// @description "This is a simple authentication service"
+// @title Go Auth Service
+// @description This is a simple authentication service
+// @host localhost:8080
+// @basePath /api/v1
 // @contact.name API Support
 // @contact.url http://www.swagger.io/support
 // @contact.email support@swagger.io
-// @host {{.Host}}
-// @BasePath {{.BasePath}}
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -32,6 +32,7 @@ func main() {
 
 	r.Use(gin.Logger())
 	r.Use(middlewares.NewCors([]string{"*"}))
+
 	r.GET("swagger/*any", middlewares.NewSwagger())
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -47,7 +48,6 @@ func main() {
 	}
 	defer resource.Close()
 	routes.InitUserRouter(publicRoute, resource)
-	// routes.InitWorkflowRouter(publicRoute, resource)
 
 	r.Run(":" + os.Getenv("PORT"))
 }

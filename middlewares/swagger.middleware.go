@@ -34,5 +34,6 @@ func NewSwagger() gin.HandlerFunc {
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port)
 	docs.SwaggerInfo.BasePath = basePath
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+	logrus.Debug("Swagger is running on " + docs.SwaggerInfo.Host + docs.SwaggerInfo.BasePath)
 	return ginSwagger.WrapHandler(swaggerFiles.Handler)
 }
